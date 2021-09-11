@@ -669,13 +669,13 @@ class Realization(object):
                 model = ULDMFieldHalo(mass, x, y, r3d, mdef, z, is_subhalo,
                                   lens_cosmo_instance, args, unique_tag)
 
-         elif mdef == 'Lazar':
+        elif mdef == 'Lazar':
 
-             if is_subhalo:
+            if is_subhalo:
                 print("subhalo implimintation does not exist... yet")
 
             else:
-             model = LazarHalo(mass, x, y, r3d, mdef, z, is_subhalo,
+                model = LazarHalo(mass, x, y, r3d, mdef, z, is_subhalo,
                             lens_cosmo_instance, args, unique_tag)
 
         else:
