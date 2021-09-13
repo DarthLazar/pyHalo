@@ -78,15 +78,18 @@ class NFWFieldHalo(Halo):
         See documentation in base class (Halos/halo_base.py)
         """
         if not hasattr(self, '_profile_args'):
-            concentration = self._concentration.NFW_concentration(self.mass,
-                                                                  self.z,
-                                                                  self._args['mc_model'],
-                                                                  self._args['mc_mdef'],
-                                                                  self._args['log_mc'],
-                                                                  self._args['c_scatter'],
-                                                                  self._args['c_scale'],
-                                                                  self._args['c_power'],
-                                                                  self._args['c_scatter_dex'])
+            if isinstance(self._args['mc_model'],float):
+                concentration = self._args['mc_model']
+            else:
+                concentration = self._concentration.NFW_concentration(self.mass,
+                                                                      self.z,
+                                                                      self._args['mc_model'],
+                                                                      self._args['mc_mdef'],
+                                                                      self._args['log_mc'],
+                                                                      self._args['c_scatter'],
+                                                                      self._args['c_scale'],
+                                                                      self._args['c_power'],
+                                                                      self._args['c_scatter_dex'])
 
             self._profile_args = (concentration)
 
@@ -106,21 +109,24 @@ class NFWSubhhalo(NFWFieldHalo):
         See documentation in base class (Halos/halo_base.py)
         """
 
-        if not hasattr(self, '_profile_args'):
-            if self._args['evaluate_mc_at_zlens']:
-                z_eval = self.z
-            else:
-                z_eval = self.z_infall
+        if isinstance(self._args['mc_model'], float):
+            concentration = self._args['mc_model']
+        else:
+            if not hasattr(self, '_profile_args'):
+                if self._args['evaluate_mc_at_zlens']:
+                    z_eval = self.z
+                else:
+                    z_eval = self.z_infall
 
-            concentration = self._concentration.NFW_concentration(self.mass,
-                                                                  z_eval,
-                                                                  self._args['mc_model'],
-                                                                  self._args['mc_mdef'],
-                                                                  self._args['log_mc'],
-                                                                  self._args['c_scatter'],
-                                                                  self._args['c_scale'],
-                                                                  self._args['c_power'],
-                                                                  self._args['c_scatter_dex'])
+                concentration = self._concentration.NFW_concentration(self.mass,
+                                                                      z_eval,
+                                                                      self._args['mc_model'],
+                                                                      self._args['mc_mdef'],
+                                                                      self._args['log_mc'],
+                                                                      self._args['c_scatter'],
+                                                                      self._args['c_scale'],
+                                                                      self._args['c_power'],
+                                                                      self._args['c_scatter_dex'])
 
             self._profile_args = (concentration)
 

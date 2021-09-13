@@ -58,9 +58,6 @@ class LazarHalo(Halo):
         R_sersic_angle = r_eff / self._lens_cosmo.D_d / self._lens_cosmo.cosmo.arcsec
         x, y = np.round(self.x, 4), np.round(self.y, 4)
 
-        #print('r_eff: %s' % (r_eff));
-        #print('R sersic angle: %s' % (R_sersic_angle))
-
         kwargs = [{'k_eff':k_eff, 'R_sersic':R_sersic_angle, 'center_x':x, 'center_y':y}]
 
         return kwargs, None
@@ -144,12 +141,12 @@ class LazarHalo(Halo):
 
         Reff = rvir/c # physical Mpc
 
-        sigma_1 = mass /(2 * np.pi * rvir**2 * I(c)) # physical Msol / Mpc^2
+        sigma_1 = mass /(2.0 * np.pi * rvir**2 * I(c)) # physical Msol / Mpc^2
         sigma_c = self._lens_cosmo.sigma_crit_lensing # physical Msol / Mpc^2
         kappa_eff = sigma_1/sigma_c
 
         """
-        print('virial radius: %s Mpc', % (rivr))
+        print('virial radius: %s Mpc', % (rvir))
         print('R effective: %s Mpc', % (Reff))
         print('sigma_1: %s Msol/Mpc^2', % (np.log10(sigma_1)))
         print('sigma_c: %s Msol/Mpc^2', % (np.log10(sigma_c)))
