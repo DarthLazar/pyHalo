@@ -209,7 +209,7 @@ class LensCosmo(object):
 
         return Rs_angle, theta_Rs / eps_crit / D_d / self.cosmo.arcsec
 
-    def nfw_physical2angle(self, M, c, z):
+    def nfw_physical2angle(self, M, c, z, mdef=None):
         """
         converts the physical mass and concentration parameter of an NFW profile into the lensing quantities
         :param M: mass enclosed 200 \rho_crit
@@ -217,7 +217,7 @@ class LensCosmo(object):
         :return: theta_Rs (observed bending angle at the scale radius, Rs_angle (angle at scale radius) (in units of arcsec)
         """
 
-        rhos, rs, _ = self.nfwParam_physical_Mpc(M, c, z)
+        rhos, rs, _ = self.nfwParam_physical_Mpc(M, c, z, mdef=mdef)
 
         return self.nfw_physical2angle_fromNFWparams(rhos, rs, z)
 
@@ -235,14 +235,14 @@ class LensCosmo(object):
 
         return self.nfw_physical2angle(M, c, z)
 
-    def rho0_c_NFW(self, c, z_eval_rho=0.):
+    def rho0_c_NFW(self, c, z_eval_rho=0., delta_c = 200.0):
         """
         computes density normalization as a function of concentration parameter
         :return: density normalization in h^2/Mpc^3 (comoving)
         """
 
         rho_crit = self.cosmo.rho_crit(z_eval_rho) / self.cosmo.h ** 2
-        return 200. / 3 * rho_crit * c ** 3 / (numpy.log(1 + c) - c / (1 + c))
+        return delta_c / 3 * rho_crit * c ** 3 / (numpy.log(1 + c) - c / (1 + c))
 
     def rN_M_nfw_comoving(self, M, N, z):
         """
@@ -256,7 +256,7 @@ class LensCosmo(object):
 
         return (3 * M / (4 * numpy.pi * rho_crit * N)) ** (1. / 3.)
 
-    def nfwParam_physical_Mpc(self, M, c, z):
+    def nfwParam_physical_Mpc(self, M, c, z, mdef=None):
 
         """
 
@@ -270,8 +270,19 @@ class LensCosmo(object):
         """
 
         h = self.cosmo.h
-        r200 = self.rN_M_nfw_comoving(M * h, 200., z) / h  # physical radius r200
-        rhos = self.rho0_c_NFW(c, z) * h ** 2  # physical density in M_sun/Mpc**3
+
+        delta_c = 200.0
+        if mdef == '200c':
+            delta_c = 200.0
+        if mdef == 'vir':
+            "Bryan & Norman 1998 definition"
+            omega_m = self.cosmo.astropy.Om0
+            omega_l = 1.0 - omega_m
+            xi = omega_m*(1.0 + z)**3/(omega_l + omega_m*(1.0 + z)**3)
+            delta_c = 18.0 * np.pi**2 + 82.0 * xi - 39.0 * xi**2
+
+        r200 = self.rN_M_nfw_comoving(M * h, delta_c, z) / h  # physical radius r200
+        rhos = self.rho0_c_NFW(c, z, delta_c=delta_c) * h ** 2  # physical density in M_sun/Mpc**3
         rs = r200 / c
         return rhos, rs, r200
 

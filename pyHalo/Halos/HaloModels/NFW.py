@@ -60,7 +60,7 @@ class NFWFieldHalo(Halo):
         """
 
         (concentration) = self.profile_args
-        Rs_angle, theta_Rs = self._lens_cosmo.nfw_physical2angle(self.mass, concentration, self.z)
+        Rs_angle, theta_Rs = self._lens_cosmo.nfw_physical2angle(self.mass, concentration, self.z, mdef = self._args['mc_mdef'])
 
         x, y = np.round(self.x, 4), np.round(self.y, 4)
 
