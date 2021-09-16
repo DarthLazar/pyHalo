@@ -127,12 +127,13 @@ class LazarHalo(Halo):
 
         # -----------------------------------------------------------------------------------------
 
+        # computing the virial radius from the concentration
         if (mdef == 'vir'):
             delta = vir_overd(z)
         elif(mdef == '200c'):
             delta = 200.0
         h = self._lens_cosmo.cosmo.astropy.h
-        rvir = self._lens_cosmo.rN_M_nfw_comoving(mass * h, delta, z) / h # physical Mpc
+        rvir = self._lens_cosmo.rN_M_nfw_comoving(mass , delta, z) / h # physical Mpc
 
         if isinstance(self._args['mc_model'], float):
             c = self._args['mc_model']
@@ -141,7 +142,12 @@ class LazarHalo(Halo):
 
         Reff = rvir/c # physical Mpc
 
-        sigma_1 = mass /(2.0 * np.pi * rvir**2 * I(c)) # physical Msol / Mpc^2
+        # computing the normalization
+        if isinstance(self._args['mc_mdef'], float):
+            sigma_1 = self._args['mc_mdef'] * 1e6 * h**2 # physical Msol / Mpc^2
+        else:
+            sigma_1 = mass / (2.0 * np.pi * rvir**2 * I(c)) # physical Msol / Mpc^2
+
         sigma_c = self._lens_cosmo.sigma_crit_lensing # physical Msol / Mpc^2
         kappa_eff = sigma_1/sigma_c
 
