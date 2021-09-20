@@ -121,7 +121,8 @@ class LazarHalo(Halo):
 
             omega_m = self._lens_cosmo.cosmo.astropy.Om0
             omega_l = 1.0 - omega_m
-            xi = omega_m*(1.0 + z)**3/(omega_l + omega_m*(1.0 + z)**3)
+            omega_Mz = omega_m*(1.0 + z)**3/(omega_l + omega_m*(1.0 + z)**3)
+            xi = omega_Mz - 1.0
 
             return 18.0 * np.pi**2 + 82.0 * xi - 39.0 * xi**2
 
